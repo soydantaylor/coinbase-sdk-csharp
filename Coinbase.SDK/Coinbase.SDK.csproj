@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Target multiple .NET versions for broader compatibility -->
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- Package Configuration -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Coinbase.SDK</PackageId>
+    <PackageVersion>1.1.0</PackageVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    
+    <!-- Package Metadata -->
+    <Title>Coinbase Advanced Trade API SDK</Title>
+    <Description>A production-ready C# SDK for the Coinbase Advanced Trade API. Provides comprehensive support for authentication, account management, trading operations, and market data access with full async/await support and dependency injection integration.</Description>
+    <Summary>Official C# SDK for Coinbase Advanced Trade API with JWT authentication, trading, and market data support</Summary>
+    <Authors>Coinbase SDK Team</Authors>
+    <Company>Coinbase</Company>
+    <Product>Coinbase SDK</Product>
+    <Copyright>Copyright © 2024 Coinbase</Copyright>
+    
+    <!-- Licensing and URLs -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/soydantaylor/coinbase-sdk-csharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/soydantaylor/coinbase-sdk-csharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Initial release of Coinbase Advanced Trade API SDK for .NET</PackageReleaseNotes>
+    
+    <!-- GitHub Package Registry Configuration -->
+    <RepositoryBranch>main</RepositoryBranch>
+    <RepositoryCommit>$(GitCommitId)</RepositoryCommit>
+    
+    <!-- Package Tags and Classification -->
+    <PackageTags>coinbase;cryptocurrency;trading;api;sdk;bitcoin;ethereum;crypto;blockchain;rest-api;jwt;async;dependency-injection</PackageTags>
+    
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    
+    <!-- Package Quality -->
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <DevelopmentDependency>false</DevelopmentDependency>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
+    <!-- Build Configuration -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS1591</WarningsNotAsErrors> <!-- Missing XML documentation -->
+  </PropertyGroup>
+
+  <!-- Package Dependencies with Version Ranges -->
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Package Assets -->
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+    <None Include="../CHANGELOG.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
