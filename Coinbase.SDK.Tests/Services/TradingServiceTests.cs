@@ -356,4 +356,107 @@ public class TradingServiceTests
         // Act & Assert
         Assert.ThrowsAsync<ArgumentException>(() => _tradingService.CancelOrderAsync(orderId));
     }
+
+    [Fact]
+    public async Task PreviewBitcoinBuyAsync_WithValidRequest_ReturnsPreviewResponse()
+    {
+        // Arrange
+        var request = new BitcoinBuyPreviewRequest
+        {
+            ProductId = "BTC-USD"
+        };
+        request.SetUsdAmount(100m);
+
+        var expectedResponse = new BitcoinBuyPreviewResponse
+        {
+            OrderTotal = "100.60",
+            CommissionTotal = "0.60",
+            QuoteSize = "100.00",
+            BaseSize = "0.00105",
+            PreviewId = "preview-123"
+        };
+
+        _mockApiClient.Setup(x => x.PostAsync<BitcoinBuyPreviewResponse>("/api/v3/brokerage/orders/preview", request, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(expectedResponse);
+
+        // Act
+        var result = await _tradingService.PreviewBitcoinBuyAsync(request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(0.60m, result.CommissionTotalDecimal);
+        Assert.Equal(100.60m, result.OrderTotalDecimal);
+        Assert.Equal("preview-123", result.PreviewId);
+    }
+
+    [Fact]
+    public void PreviewBitcoinBuyAsync_WithZeroAmount_ThrowsCoinbaseValidationException()
+    {
+        // Arrange
+        var request = new BitcoinBuyPreviewRequest
+        {
+            ProductId = "BTC-USD"
+        };
+
+        // Act & Assert
+        Assert.ThrowsAsync<CoinbaseValidationException>(() => _tradingService.PreviewBitcoinBuyAsync(request));
+    }
+
+    [Fact]
+    public void PreviewBitcoinBuyAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentNullException>(() => _tradingService.PreviewBitcoinBuyAsync(null!));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void PreviewBitcoinBuyAsync_WithInvalidProductId_ThrowsCoinbaseValidationException(string productId)
+    {
+        // Arrange
+        var request = new BitcoinBuyPreviewRequest
+        {
+            ProductId = productId
+        };
+        request.SetUsdAmount(100m);
+
+        // Act & Assert
+        Assert.ThrowsAsync<CoinbaseValidationException>(() => _tradingService.PreviewBitcoinBuyAsync(request));
+    }
+
+    [Fact]
+    public void PreviewBitcoinBuyAsync_WithSellSide_ThrowsCoinbaseValidationException()
+    {
+        // Arrange
+        var request = new BitcoinBuyPreviewRequest
+        {
+            ProductId = "BTC-USD",
+            Side = "SELL"
+        };
+        request.SetUsdAmount(100m);
+
+        // Act & Assert
+        Assert.ThrowsAsync<CoinbaseValidationException>(() => _tradingService.PreviewBitcoinBuyAsync(request));
+    }
+
+    [Fact]
+    public async Task PreviewBitcoinBuyAsync_WithApiException_ThrowsCoinbaseTradingException()
+    {
+        // Arrange
+        var request = new BitcoinBuyPreviewRequest
+        {
+            ProductId = "BTC-USD"
+        };
+        request.SetUsdAmount(100m);
+
+        _mockApiClient.Setup(x => x.PostAsync<BitcoinBuyPreviewResponse>("/api/v3/brokerage/orders/preview", request, It.IsAny<CancellationToken>()))
+                     .ThrowsAsync(new HttpRequestException("Network error"));
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CoinbaseTradingException>(() => _tradingService.PreviewBitcoinBuyAsync(request));
+        Assert.Contains("Failed to preview Bitcoin buy order", exception.Message);
+        Assert.Contains("Network error", exception.Message);
+    }
 }

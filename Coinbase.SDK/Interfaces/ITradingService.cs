@@ -49,6 +49,14 @@ public interface ITradingService
     Task<BitcoinBuyResponse> PlaceBitcoinBuyOrderAsync(BitcoinBuyRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Previews a Bitcoin buy order to get commission and total cost
+    /// </summary>
+    /// <param name="request">The Bitcoin buy preview request parameters</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
+    /// <returns>The preview response with commission details</returns>
+    Task<BitcoinBuyPreviewResponse> PreviewBitcoinBuyAsync(BitcoinBuyPreviewRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves orders with optional filtering via /api/v3/brokerage/orders/historical/batch
     /// </summary>
     /// <param name="filter">Optional filter criteria for orders</param>

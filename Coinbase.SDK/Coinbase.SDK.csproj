@@ -10,7 +10,7 @@
     <!-- Package Configuration -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Coinbase.SDK</PackageId>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     

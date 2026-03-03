@@ -126,6 +126,30 @@ public class TradingService : ITradingService
     }
 
     /// <inheritdoc />
+    public async Task<BitcoinBuyPreviewResponse> PreviewBitcoinBuyAsync(BitcoinBuyPreviewRequest request, CancellationToken cancellationToken = default)
+    {
+        ValidateBitcoinBuyPreviewRequest(request);
+
+        try
+        {
+            var response = await _apiClient.PostAsync<BitcoinBuyPreviewResponse>("/api/v3/brokerage/orders/preview", request, cancellationToken);
+
+            if (response == null)
+                throw new CoinbaseTradingException("Failed to preview Bitcoin buy order: Invalid response from API", "INVALID_RESPONSE");
+
+            return response;
+        }
+        catch (CoinbaseException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new CoinbaseTradingException($"Failed to preview Bitcoin buy order: {ex.Message}", ex, "API_ERROR");
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<OrdersResult> GetOrdersAsync(OrderFilter? filter = null, CancellationToken cancellationToken = default)
     {
         try
@@ -174,6 +198,18 @@ public class TradingService : ITradingService
     }
 
     private static void ValidateBitcoinBuyRequest(BitcoinBuyRequest request)
+    {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+        if (request.UsdAmount <= 0)
+            throw new CoinbaseValidationException("USD amount must be greater than zero");
+        if (string.IsNullOrWhiteSpace(request.ProductId))
+            throw new CoinbaseValidationException("Product ID cannot be null or empty");
+        if (request.Side != "BUY")
+            throw new CoinbaseValidationException("Bitcoin buy orders must have BUY side");
+    }
+
+    private static void ValidateBitcoinBuyPreviewRequest(BitcoinBuyPreviewRequest request)
     {
         if (request == null)
             throw new ArgumentNullException(nameof(request));

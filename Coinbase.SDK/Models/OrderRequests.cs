@@ -107,6 +107,89 @@ public class BitcoinBuyRequest
 }
 
 /// <summary>
+/// Request parameters for previewing a Bitcoin buy order (no client_order_id needed)
+/// </summary>
+public class BitcoinBuyPreviewRequest
+{
+    /// <summary>
+    /// The product identifier (defaults to BTC-USD)
+    /// </summary>
+    [JsonProperty("product_id")]
+    public string ProductId { get; set; } = "BTC-USD";
+
+    /// <summary>
+    /// The order side (must be BUY for buy orders)
+    /// </summary>
+    [JsonProperty("side")]
+    public string Side { get; set; } = "BUY";
+
+    /// <summary>
+    /// Order configuration for market order
+    /// </summary>
+    [JsonProperty("order_configuration")]
+    public OrderConfiguration OrderConfiguration { get; set; } = new OrderConfiguration();
+
+    /// <summary>
+    /// Sets the USD amount to spend on Bitcoin
+    /// </summary>
+    public void SetUsdAmount(decimal amount)
+    {
+        OrderConfiguration.MarketMarketIoc.QuoteSize = amount.ToString("F2");
+    }
+
+    /// <summary>
+    /// Gets the USD amount
+    /// </summary>
+    [JsonIgnore]
+    public decimal UsdAmount => decimal.TryParse(OrderConfiguration.MarketMarketIoc.QuoteSize, out var amount) ? amount : 0;
+}
+
+/// <summary>
+/// Response from Bitcoin buy order preview - matches Coinbase API preview structure
+/// </summary>
+public class BitcoinBuyPreviewResponse
+{
+    [JsonProperty("order_total")]
+    public string OrderTotal { get; set; } = "0";
+
+    [JsonProperty("commission_total")]
+    public string CommissionTotal { get; set; } = "0";
+
+    [JsonProperty("quote_size")]
+    public string? QuoteSize { get; set; }
+
+    [JsonProperty("base_size")]
+    public string? BaseSize { get; set; }
+
+    [JsonProperty("best_bid")]
+    public string? BestBid { get; set; }
+
+    [JsonProperty("best_ask")]
+    public string? BestAsk { get; set; }
+
+    [JsonProperty("is_max")]
+    public bool IsMax { get; set; }
+
+    [JsonProperty("slippage")]
+    public string? Slippage { get; set; }
+
+    [JsonProperty("errs")]
+    public string[]? Errs { get; set; }
+
+    [JsonProperty("warning")]
+    public string[]? Warning { get; set; }
+
+    [JsonProperty("preview_id")]
+    public string? PreviewId { get; set; }
+
+    [JsonIgnore]
+    public decimal CommissionTotalDecimal => decimal.TryParse(CommissionTotal, out var v) ? v : 0m;
+
+    [JsonIgnore]
+    public decimal OrderTotalDecimal => decimal.TryParse(OrderTotal, out var v) ? v : 0m;
+}
+
+/// <summary>
 /// Order configuration for market orders
 /// </summary>
 public class OrderConfiguration
